@@ -10,29 +10,41 @@
       "auth": {
         "kind": "basic",
         "users": {
-          "employee1@company.com": {
-            "password": "welcome",
-            "roles": ["Employee"]
-          },
           "employee2@company.com": {
             "password": "welcome",
-            "roles": ["Employee"]
+            "roles": [
+              "Employee"
+            ]
           },
           "employee3@company.com": {
             "password": "welcome",
-            "roles": ["Employee"]
+            "roles": [
+              "Employee"
+            ]
           },
           "hrapprover@company.com": {
             "password": "welcome",
-            "roles": ["HRApprover"]
+            "roles": [
+              "HRApprover"
+            ]
           },
           "approver1@company.com": {
             "password": "welcome",
-            "roles": ["Approver"]
+            "roles": [
+              "Approver"
+            ]
           },
           "admin1@company.com": {
             "password": "welcome",
-            "roles": ["Admin"]
+            "roles": [
+              "Admin"
+            ]
+          },
+          "nktshelke3346@gmail.com": {
+            "password": "welcome",
+            "roles": [
+              "Employee"
+            ]
           }
         }
       }
