@@ -1,0 +1,29 @@
+{
+  "_version": "1.49.0",
+  "sap.app": {
+    "id": "Asset_Management_Application-1781454148510",
+    "applicationVersion": {
+      "version": "1.0.0"
+    },
+    "type": "application",
+    "title": "",
+    "description": "A simple CAP project.",
+    "i18n": "i18n/i18n.properties",
+    "crossNavigation": {
+      "inbounds": {
+        "resources-display": {
+          "semanticObject": "resources",
+          "action": "display",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "Asset_Management_Application1781454148510.service"
+  }
+}

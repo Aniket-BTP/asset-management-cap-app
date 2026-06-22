@@ -1,0 +1,6 @@
+ID,employeeNo,fullName,email,department,managerEmail,active
+1,E1001,Aniket Shelke,nktshelke3346@gmail.com,IT,hrapprover@company.com,true
+2,E1002,Priya Sharma,employee2@company.com,Finance,hrapprover@company.com,true
+3,E1003,Rahul Patil,employee3@company.com,Operations,hrapprover@company.com,true
+4,M1001,Neha Kulkarni,hrapprover@company.com,HR,,true
+5,A1001,Arjun Mehta,approver1@company.com,Management,,true

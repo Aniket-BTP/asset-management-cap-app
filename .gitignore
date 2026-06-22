@@ -1,0 +1,45 @@
+# Node.js dependencies
+node_modules/
+
+# CAP generated content
+gen/
+.gen/
+target/
+_out/
+@cds-models/
+
+# Local databases
+*.sqlite
+*.sqlite-shm
+*.sqlite-wal
+*.db
+/sqlite
+
+# Local environment and credentials
+.env
+.env.*
+.cdsrc-private.json
+default-env.json
+default-*.json
+*service-key*
+*credentials*
+
+# MTA generated content
+mta_archives/
+*_mta_build_tmp/
+*.mtar
+mta-op-logs/
+
+# Local backup and temporary files
+backups/
+app/asset-ui-old-backup/
+app/asset-ui-temporary-backup/
+mta.yaml.*.backup
+project_snapshot.txt
+
+# OS/editor files
+.DS_Store
+
+# Generated UI deployment packages
+app/asset-ui/dist/
+app/resources/*.zip

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  >
+  <meta
+    http-equiv="Cache-Control"
+    content="no-store, no-cache, must-revalidate"
+  >
+  <title>Asset Management - Signed Out</title>
+
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      background: #f5f6f7;
+    }
+
+    .card {
+      width: min(440px, calc(100% - 48px));
+      padding: 32px;
+      text-align: center;
+      background: #ffffff;
+      border-radius: 8px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    h1 {
+      margin-top: 0;
+      color: #1d2d3e;
+    }
+
+    p {
+      color: #475e75;
+      line-height: 1.5;
+    }
+
+    a {
+      display: inline-block;
+      margin-top: 16px;
+      padding: 11px 22px;
+      border-radius: 6px;
+      color: #ffffff;
+      background: #0a6ed1;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    a:hover {
+      background: #0854a0;
+    }
+  </style>
+</head>
+
+<body>
+  <main class="card">
+    <h1>Signed Out</h1>
+
+    <p>
+      You have successfully signed out of the
+      Asset Management application.
+    </p>
+
+    <a href="/asset-ui/index.html?sap_idp=sap.default">
+      Sign In Again
+    </a>
+  </main>
+</body>
+</html>

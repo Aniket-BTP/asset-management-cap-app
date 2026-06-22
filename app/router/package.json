@@ -1,0 +1,11 @@
+{
+  "name": "asset-management-v2-approuter",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/@sap/approuter/approuter.js"
+  },
+  "dependencies": {
+    "@sap/approuter": "^20.0.0"
+  }
+}

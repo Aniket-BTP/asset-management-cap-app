@@ -1,0 +1,56 @@
+{
+  "_version": "1.58.0",
+  "sap.app": {
+    "id": "asset.management.ui",
+    "type": "application",
+    "title": "Asset Management",
+    "description": "Asset Management CAP Application",
+    "applicationVersion": {
+      "version": "1.0.5"
+    },
+    "crossNavigation": {
+      "inbounds": {
+        "AssetManagement-display": {
+          "semanticObject": "AssetManagement",
+          "action": "display",
+          "title": "Asset Management",
+          "subTitle": "Manage company assets and requests",
+          "info": "Asset Management",
+          "icon": "sap-icon://product",
+          "signature": {
+            "parameters": {},
+            "additionalParameters": "allowed"
+          }
+        }
+      }
+    }
+  },
+  "sap.ui": {
+    "technology": "UI5",
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+  "sap.ui5": {
+    "dependencies": {
+      "minUI5Version": "1.120.0",
+      "libs": {
+        "sap.m": {},
+        "sap.f": {},
+        "sap.ui.core": {}
+      }
+    },
+    "rootView": {
+      "viewName": "asset.management.ui.view.App",
+      "type": "XML",
+      "async": true,
+      "id": "App"
+    }
+  },
+  "sap.cloud": {
+    "public": true,
+    "service": "assetmanagementv2service"
+  }
+}

@@ -1,0 +1,224 @@
+_schema-version: "3.3"
+ID: asset-management-v2
+version: 1.1.3
+description: Asset Management CAP, UI5 and Work Zone Application
+
+parameters:
+  deploy_mode: html5-repo
+  enable-parallel-deployments: true
+
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm ci
+        - npx cds build --production
+
+modules:
+  - name: asset-management-v2-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      memory: 256M
+      disk-quota: 512M
+      instances: 1
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: asset-management-v2-db
+      - name: asset-management-v2-xsuaa
+      - name: asset-management-v2-destination
+
+  - name: asset-management-v2-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      memory: 256M
+      disk-quota: 512M
+      buildpack: nodejs_buildpack
+    requires:
+      - name: asset-management-v2-db
+
+  - name: asset-management-v2-approuter
+    type: approuter.nodejs
+    path: app/router
+    parameters:
+      memory: 128M
+      disk-quota: 256M
+      keep-existing-routes: true
+    build-parameters:
+      builder: custom
+      commands:
+        - rm -rf resources/asset-ui
+        - mkdir -p resources/asset-ui
+        - cp -R ../asset-ui/. resources/asset-ui/
+        - cp logout.html resources/asset-ui/logout.html
+        - npm ci --omit=dev
+    provides:
+      - name: app-api
+        properties:
+          app-protocol: ${protocol}
+          app-uri: ${default-uri}
+          url: ${default-url}
+    requires:
+      - name: asset-management-v2-xsuaa
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api
+          url: ~{srv-url}
+          forwardAuthToken: true
+      - name: asset-management-v2-html5-runtime
+      - name: asset-management-v2-destination
+
+  - name: asset-management-v2-ui
+    type: html5
+    path: app/asset-ui
+    build-parameters:
+      builder: custom
+      supported-platforms:
+        []
+      build-result: dist
+      commands:
+        - bash build-html5.sh
+
+  - name: asset-management-v2-destination-content
+    type: com.sap.application.content
+    requires:
+      - name: asset-management-v2-destination
+        parameters:
+          content-target: true
+      - name: asset-management-v2-html5-repo-host
+        parameters:
+          service-key:
+            name: asset-management-v2-html5-repo-host-key
+      - name: asset-management-v2-xsuaa
+        parameters:
+          service-key:
+            name: asset-management-v2-xsuaa-key
+    parameters:
+      content:
+        instance:
+          destinations:
+            - Name: assetmanagementv2service_html_repo_host
+              ServiceInstanceName: asset-management-v2-html5-repo-host
+              ServiceKeyName: asset-management-v2-html5-repo-host-key
+              sap.cloud.service: assetmanagementv2service
+            - Name: assetmanagementv2service_uaa
+              Authentication: OAuth2UserTokenExchange
+              ServiceInstanceName: asset-management-v2-xsuaa
+              ServiceKeyName: asset-management-v2-xsuaa-key
+              sap.cloud.service: assetmanagementv2service
+          existing_destinations_policy: update
+    build-parameters:
+      no-source: true
+
+  - name: asset-management-v2-ui-content
+    type: com.sap.application.content
+    path: app
+    requires:
+      - name: asset-management-v2-destination
+      - name: asset-management-v2-html5-repo-host
+        parameters:
+          content-target: true
+    build-parameters:
+      build-result: resources
+      requires:
+        - name: asset-management-v2-ui
+          artifacts:
+            - asset-management-v2-ui.zip
+          target-path: resources/
+
+
+resources:
+  - name: asset-management-v2-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+      service-name: asset-management-v2-db
+
+  - name: asset-management-v2-xsuaa
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: app-api
+    parameters:
+      service: xsuaa
+      service-plan: application
+      service-name: asset-management-v2-xsuaa
+      path: ./xs-security.json
+      config:
+        xsappname: asset-management-v2-${org}-${space}
+        tenant-mode: dedicated
+        role-collections:
+          - name: AssetManagementV2Employee
+            description: Asset Management Employee
+            role-template-references:
+              - $XSAPPNAME.Employee
+          - name: AssetManagementV2HRApprover
+            description: Asset Management HR Approver
+            role-template-references:
+              - $XSAPPNAME.HRApprover
+          - name: AssetManagementV2Approver
+            description: Asset Management Approver
+            role-template-references:
+              - $XSAPPNAME.Approver
+          - name: AssetManagementV2Admin
+            description: Asset Management Administrator
+            role-template-references:
+              - $XSAPPNAME.Admin
+        oauth2-configuration:
+          redirect-uris:
+            - https://*~{app-api/app-uri}/**
+          credential-types:
+            - "binding-secret"
+            - "x509"
+
+  - name: asset-management-v2-destination
+    type: org.cloudfoundry.managed-service
+    requires:
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-api
+          url: ~{srv-url}
+          forwardAuthToken: true
+    parameters:
+      service: destination
+      service-plan: lite
+      service-name: asset-management-v2-destination
+      config:
+        HTML5Runtime_enabled: true
+        version: 1.0.0
+        init_data:
+          instance:
+            existing_destinations_policy: update
+            destinations:
+              - Name: srv-api
+                Description: Asset Management CAP Service
+                URL: ~{srv-api/srv-url}
+                Type: HTTP
+                ProxyType: Internet
+                Authentication: NoAuthentication
+                HTML5.ForwardAuthToken: true
+                HTML5.DynamicDestination: true
+                sap.cloud.service: assetmanagementv2service
+
+  - name: asset-management-v2-html5-repo-host
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-host
+      service-name: asset-management-v2-html5-repo-host
+
+  - name: asset-management-v2-html5-runtime
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-runtime
+      service-name: asset-management-v2-html5-runtime

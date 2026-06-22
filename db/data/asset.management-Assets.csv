@@ -1,0 +1,7 @@
+ID,assetTag,assetType,brand,model,serialNumber,status,purchaseDate,warrantyEnd,assignedTo_ID,assignedDate,location,assetValue,currency,notes
+1,AST-1001,Laptop,Dell,Latitude 5440,SN-DL-1001,ASSIGNED,2025-01-15,2028-01-14,1,2025-02-01,Pune,78000.00,INR,Primary development laptop
+2,AST-1002,Monitor,LG,UltraGear 27,SN-LG-1002,ASSIGNED,2024-11-10,2027-11-09,1,2025-02-01,Pune,28000.00,INR,External monitor
+3,AST-1003,Mobile,Samsung,Galaxy A55,SN-SM-1003,AVAILABLE,2025-03-05,2027-03-04,,,Pune,42000.00,INR,Available stock
+4,AST-1004,Laptop,HP,EliteBook 840,SN-HP-1004,ASSIGNED,2024-09-20,2027-09-19,2,2024-10-01,Mumbai,85000.00,INR,Finance team laptop
+5,AST-1005,Headset,Jabra,Evolve2 65,SN-JB-1005,MAINTENANCE,2024-06-15,2026-06-14,,,Pune,18000.00,INR,Under repair
+6,AST-1006,Laptop,Lenovo,ThinkPad T14,SN-LN-1006,ASSIGNED,2025-02-10,2028-02-09,3,2025-03-01,Bengaluru,92000.00,INR,Operations laptop

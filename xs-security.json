@@ -1,0 +1,53 @@
+{
+  "tenant-mode": "dedicated",
+  "description": "Asset Management Application Security",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.Employee",
+      "description": "Asset Management Employee"
+    },
+    {
+      "name": "$XSAPPNAME.HRApprover",
+      "description": "Asset Management HR Approver"
+    },
+    {
+      "name": "$XSAPPNAME.Approver",
+      "description": "Asset Request Approver"
+    },
+    {
+      "name": "$XSAPPNAME.Admin",
+      "description": "Asset Management Administrator"
+    }
+  ],
+  "role-templates": [
+    {
+      "name": "Employee",
+      "description": "Employee access",
+      "scope-references": [
+        "$XSAPPNAME.Employee"
+      ]
+    },
+    {
+      "name": "HRApprover",
+      "description": "HR approver access",
+      "scope-references": [
+        "$XSAPPNAME.HRApprover"
+      ]
+    },
+    {
+      "name": "Approver",
+      "description": "Request approval access",
+      "scope-references": [
+        "$XSAPPNAME.Approver"
+      ]
+    },
+    {
+      "name": "Admin",
+      "description": "Full administration access",
+      "scope-references": [
+        "$XSAPPNAME.Admin"
+      ]
+    }
+  ],
+  "attributes": []
+}

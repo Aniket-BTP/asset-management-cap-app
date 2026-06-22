@@ -1,0 +1,375 @@
+<mvc:View
+  controllerName="asset.management.ui.controller.App"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns="sap.m"
+  xmlns:core="sap.ui.core">
+
+  <App>
+    <Page
+      title="Asset Management"
+      busy="{vm>/busy}"
+      busyIndicatorDelay="0">
+
+      <customHeader>
+        <OverflowToolbar>
+          <Title text="Asset Management" level="H2"/>
+          <ToolbarSpacer/>
+
+          <ObjectStatus
+            text="{= 'Signed in: ' + ${vm>/user/id} }"
+            icon="sap-icon://person-placeholder"
+            state="Information"
+            visible="{= ${vm>/user/id} !== '' }"
+            class="sapUiSmallMarginEnd"/>
+
+          <Button
+            text="{= ${vm>/user/id} ? 'Sign Out' : 'Sign In' }"
+            icon="{= ${vm>/user/id} ? 'sap-icon://log' : 'sap-icon://employee' }"
+            tooltip="{= ${vm>/user/id} ? 'Sign out from the current user' : 'Sign in' }"
+            visible="{= !${vm>/isWorkZoneRuntime} }"
+            press=".onSwitchUser"
+            class="sapUiTinyMarginEnd"/>
+
+          <Button
+            text="Refresh"
+            icon="sap-icon://refresh"
+            press=".onRefresh"/>
+        </OverflowToolbar>
+      </customHeader>
+
+      <content>
+        <IconTabBar
+          id="mainTabs"
+          selectedKey="assets"
+          expandable="false"
+          class="sapUiResponsiveContentPadding">
+
+          <items>
+
+            <IconTabFilter
+              key="assets"
+              text="Assets"
+              count="{vm>/counts/assets}"
+              icon="sap-icon://product">
+
+              <VBox class="sapUiSmallMarginTop">
+
+                <OverflowToolbar>
+                  <Title text="All Assets" level="H3"/>
+                  <ToolbarSpacer/>
+
+                <Button
+                  text="Create Asset"
+                  icon="sap-icon://add"
+                  type="Emphasized"
+                  visible="{vm>/user/canManageAssets}"
+                  press=".onCreateAsset"
+                  class="sapUiSmallMarginEnd"/>
+
+                  <ObjectStatus
+                    text="{= ${vm>/counts/available} + ' available' }"
+                    state="Success"/>
+                  <ObjectStatus
+                    text="{= ${vm>/counts/assigned} + ' assigned' }"
+                    state="Information"
+                    class="sapUiSmallMarginBegin"/>
+                </OverflowToolbar>
+
+                <Table
+                  items="{vm>/assets}"       
+                  width="100%"
+                  autoPopinMode="true"
+                  popinLayout="GridSmall"
+                  growing="true"
+                  growingThreshold="20"
+                  sticky="ColumnHeaders"
+                  noDataText="No assets available">
+
+                  <columns>
+                    <Column width="10rem" importance="High">
+                      <Text text="Asset"/>
+                    </Column>
+
+                    <Column width="8rem" importance="Medium">
+                      <Text text="Type"/>
+                    </Column>
+
+                    <Column width="13rem" importance="Low">
+                      <Text text="Brand / Model"/>
+                    </Column>
+
+                    <Column width="9rem" importance="High">
+                      <Text text="Status"/>
+                    </Column>
+
+                    <Column width="12rem" importance="Medium">
+                      <Text text="Assigned To"/>
+                    </Column>
+
+                    <Column width="9rem" importance="Low">
+                      <Text text="Location"/>
+                    </Column>
+
+                    <Column
+                      width="9rem"
+                      hAlign="End"
+                      importance="Medium">
+                      <Text text="Value"/>
+                    </Column>
+
+                    <Column
+                      width="6rem"
+                      hAlign="Center"
+                      importance="High"
+                      visible="{vm>/user/canManageAssets}">
+                      <Text text="Actions"/>
+                    </Column>
+                    
+                  </columns>
+
+                  <items>
+                    <ColumnListItem>
+                      <cells>
+                        <ObjectIdentifier
+                          title="{vm>assetTag}"
+                          text="{vm>serialNumber}"/>
+
+                        <Text text="{vm>assetType}"/>
+
+                        <Text text="{= (${vm>brand} || '') + ' ' + (${vm>model} || '') }"/>
+
+                        <ObjectStatus
+                          text="{vm>status}"
+                          state="{path:'vm>status', formatter:'.formatStatusState'}"/>
+
+                        <Text text="{vm>assignedTo/fullName}"/>
+
+                        <Text text="{vm>location}"/>
+
+                        <ObjectNumber
+                          number="{vm>assetValue}"
+                          unit="{vm>currency}"/>
+                         <HBox
+                            justifyContent="Center"
+                            visible="{vm>/user/canManageAssets}">
+                            <Button
+                              icon="sap-icon://edit"
+                              type="Transparent"
+                              tooltip="Edit Asset"
+                              press=".onEditAsset"/>
+                          </HBox>
+
+                      </cells>
+                    </ColumnListItem>
+                  </items>
+                </Table>
+              </VBox>
+            </IconTabFilter>
+
+            <IconTabFilter
+              key="requests"
+              text="Requests"
+              count="{vm>/counts/requests}"
+              icon="sap-icon://request">
+
+              <VBox class="sapUiSmallMarginTop">
+
+                <MessageStrip
+                  text="Assign uses AVAILABLE assets. Transfer and Return use ASSIGNED assets."
+                  type="Information"
+                  showIcon="true"
+                  class="sapUiSmallMarginBottom"/>
+
+                <OverflowToolbar>
+                  <Title text="Asset Requests" level="H3"/>
+                  <ToolbarSpacer/>
+                  <Button
+                    text="Create Request"
+                    icon="sap-icon://add"
+                    type="Emphasized"
+                    visible="{vm>/user/canCreate}"
+                    press=".onOpenCreateRequest"/>
+                </OverflowToolbar>
+
+                <Table
+                  items="{vm>/requests}"
+                  growing="true"
+                  growingThreshold="20"
+                  sticky="ColumnHeaders"
+                  autoPopinMode="false"
+                  noDataText="No asset requests available">
+
+                  <columns>
+                    <Column width="4rem" importance="High">
+                      <Text text="ID"/>
+                    </Column>
+                    <Column width="7rem" importance="High">
+                      <Text text="Type"/>
+                    </Column>
+                    <Column width="8rem" importance="High">
+                      <Text text="Asset"/>
+                    </Column>
+                    <Column width="10rem" importance="High">
+                      <Text text="Requester"/>
+                    </Column>
+                    <Column width="10rem" importance="High">
+                      <Text text="Target Employee"/>
+                    </Column>
+                    <Column width="8rem" importance="High">
+                      <Text text="Status"/>
+                    </Column>
+                    <Column width="15rem" importance="High">
+                      <Text text="Reason"/>
+                    </Column>
+                    <Column width="12rem" importance="High">
+                      <Text text="Actions"/>
+                    </Column>
+                  </columns>
+
+                  <items>
+                    <ColumnListItem>
+                      <cells>
+                        <ObjectIdentifier title="{vm>ID}"/>
+
+                        <Text text="{vm>requestType}"/>
+
+                        <Text text="{vm>asset/assetTag}"/>
+
+                        <Text text="{vm>requester/fullName}"/>
+
+                        <Text text="{vm>targetEmployee/fullName}"/>
+
+                        <ObjectStatus
+                          text="{vm>status}"
+                          state="{path:'vm>status', formatter:'.formatStatusState'}"/>
+
+                        <Text
+                          text="{vm>reason}"
+                          wrapping="false"
+                          tooltip="{vm>reason}"/>
+
+                        <HBox
+                          width="100%"
+                          renderType="Bare"
+                          wrap="NoWrap"
+                          alignItems="Center">
+                          <Button
+                            text="Submit"
+                            type="Emphasized"
+                            visible="{= ${vm>status} === 'DRAFT' &amp;&amp; ${vm>/user/canCreate} }"
+                            press=".onSubmitRequest"
+                            class="sapUiTinyMarginEnd"/>
+
+                          <Button
+                            text="Delete"
+                            type="Transparent"
+                            icon="sap-icon://delete"
+                            visible="{= ${vm>status} === 'DRAFT' &amp;&amp; ${vm>/user/canCreate} }"
+                            press=".onDeleteRequest"
+                            class="sapUiTinyMarginEnd"/>
+
+                          <Button
+                            text="Approve"
+                            type="Accept"
+                            visible="{= ${vm>status} === 'SUBMITTED' &amp;&amp; ${vm>/user/canApprove} }"
+                            press=".onApproveRequest"
+                            class="sapUiTinyMarginEnd sapUiTinyMarginBottom"/>
+
+                          <Button
+                            text="Reject"
+                            type="Reject"
+                            visible="{= ${vm>status} === 'SUBMITTED' &amp;&amp; ${vm>/user/canApprove} }"
+                            press=".onRejectRequest"
+                            class="sapUiTinyMarginBottom"/>
+                        </HBox>
+                      </cells>
+                    </ColumnListItem>
+                  </items>
+                </Table>
+              </VBox>
+            </IconTabFilter>
+
+            <IconTabFilter
+              key="employees"
+              text="Employees"
+              visible="{vm>/user/canViewEmployees}"
+              count="{vm>/counts/employees}"
+              icon="sap-icon://employee">
+
+              <VBox class="sapUiSmallMarginTop">
+              
+                <OverflowToolbar>
+                  <Title text="Employees" level="H3"/>
+
+                  <ToolbarSpacer/>
+
+                  <Button
+                    text="Create Employee"
+                    icon="sap-icon://add"
+                    type="Emphasized"
+                    visible="{vm>/user/canManageEmployees}"
+                    press=".onCreateEmployee"/>
+                </OverflowToolbar>
+
+                <Table
+                  items="{vm>/employees}"
+                  growing="true"
+                  growingThreshold="20"
+                  noDataText="No employees available">
+
+                  <columns>
+                    <Column width="9rem">
+                      <Text text="Employee No."/>
+                    </Column>
+                    <Column width="15rem">
+                      <Text text="Name"/>
+                    </Column>
+                    <Column width="18rem">
+                      <Text text="Email"/>
+                    </Column>
+                    <Column width="12rem">
+                      <Text text="Department"/>
+                    </Column>
+                    <Column width="9rem" importance="High">
+                      <Text text="Status"/>
+                    </Column>
+                    <Column
+                      width="8rem"
+                      hAlign="Center"
+                      visible="{vm>/user/canManageEmployees}">
+                      <Text text="Actions"/>
+                    </Column>
+                  </columns>
+
+                  <items>
+                    <ColumnListItem>
+                      <cells>
+                        <Text text="{vm>employeeNo}"/>
+                        <Text text="{vm>fullName}"/>
+                        <Text text="{vm>email}"/>
+                        <Text text="{vm>department}"/>
+                        <ObjectStatus
+                          text="{= ${vm>active} ? 'Active' : 'Inactive' }"
+                          state="{= ${vm>active} ? 'Success' : 'Error' }"/>
+                        <HBox
+                          justifyContent="Center"
+                          visible="{vm>/user/canManageEmployees}">
+                          <Button
+                            icon="sap-icon://edit"
+                            type="Transparent"
+                            tooltip="Edit Employee"
+                            press=".onEditEmployee"/>
+                        </HBox>  
+                      </cells>
+                    </ColumnListItem>
+                  </items>
+                </Table>
+              </VBox>
+            </IconTabFilter>
+
+          </items>
+        </IconTabBar>
+      </content>
+    </Page>
+  </App>
+</mvc:View>
