@@ -1,19 +1,18 @@
 _schema-version: "3.3"
 ID: asset-management-v2
-version: 1.1.3
+version: 1.1.6
 description: Asset Management CAP, UI5 and Work Zone Application
-
 parameters:
   deploy_mode: html5-repo
   enable-parallel-deployments: true
-
 build-parameters:
   before-all:
     - builder: custom
       commands:
         - npm ci
         - npx cds build --production
-
+        - rm -f gen/srv/db.sqlite
+        - npx cds deploy --to sqlite:gen/srv/db.sqlite --profile production
 modules:
   - name: asset-management-v2-srv
     type: nodejs
@@ -30,20 +29,8 @@ modules:
         properties:
           srv-url: ${default-url}
     requires:
-      - name: asset-management-v2-db
       - name: asset-management-v2-xsuaa
       - name: asset-management-v2-destination
-
-  - name: asset-management-v2-db-deployer
-    type: hdb
-    path: gen/db
-    parameters:
-      memory: 256M
-      disk-quota: 512M
-      buildpack: nodejs_buildpack
-    requires:
-      - name: asset-management-v2-db
-
   - name: asset-management-v2-approuter
     type: approuter.nodejs
     path: app/router
@@ -75,18 +62,15 @@ modules:
           forwardAuthToken: true
       - name: asset-management-v2-html5-runtime
       - name: asset-management-v2-destination
-
   - name: asset-management-v2-ui
     type: html5
     path: app/asset-ui
     build-parameters:
       builder: custom
-      supported-platforms:
-        []
+      supported-platforms: []
       build-result: dist
       commands:
         - bash build-html5.sh
-
   - name: asset-management-v2-destination-content
     type: com.sap.application.content
     requires:
@@ -117,7 +101,6 @@ modules:
           existing_destinations_policy: update
     build-parameters:
       no-source: true
-
   - name: asset-management-v2-ui-content
     type: com.sap.application.content
     path: app
@@ -133,16 +116,7 @@ modules:
           artifacts:
             - asset-management-v2-ui.zip
           target-path: resources/
-
-
 resources:
-  - name: asset-management-v2-db
-    type: com.sap.xs.hdi-container
-    parameters:
-      service: hana
-      service-plan: hdi-shared
-      service-name: asset-management-v2-db
-
   - name: asset-management-v2-xsuaa
     type: org.cloudfoundry.managed-service
     requires:
@@ -153,7 +127,7 @@ resources:
       service-name: asset-management-v2-xsuaa
       path: ./xs-security.json
       config:
-        xsappname: asset-management-v2-${org}-${space}
+        xsappname: asset-management-v2-sharedservices-space-dev
         tenant-mode: dedicated
         role-collections:
           - name: AssetManagementV2Employee
@@ -176,9 +150,8 @@ resources:
           redirect-uris:
             - https://*~{app-api/app-uri}/**
           credential-types:
-            - "binding-secret"
-            - "x509"
-
+            - binding-secret
+            - x509
   - name: asset-management-v2-destination
     type: org.cloudfoundry.managed-service
     requires:
@@ -208,14 +181,12 @@ resources:
                 HTML5.ForwardAuthToken: true
                 HTML5.DynamicDestination: true
                 sap.cloud.service: assetmanagementv2service
-
   - name: asset-management-v2-html5-repo-host
     type: org.cloudfoundry.managed-service
     parameters:
       service: html5-apps-repo
       service-plan: app-host
       service-name: asset-management-v2-html5-repo-host
-
   - name: asset-management-v2-html5-runtime
     type: org.cloudfoundry.managed-service
     parameters:

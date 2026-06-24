@@ -2,12 +2,11 @@
   "name": "Asset_Management_Application-1781454148510",
   "version": "1.0.0",
   "dependencies": {
-    "@cap-js/hana": "^2",
     "@sap/cds": "^9",
-    "@sap/xssec": "^4"
+    "@sap/xssec": "^4",
+    "@cap-js/sqlite": "^2.4"
   },
   "devDependencies": {
-    "@cap-js/sqlite": "^2.4",
     "@sap/cds-dk": "^9.9.2"
   },
   "scripts": {
@@ -18,7 +17,12 @@
     "requires": {
       "[production]": {
         "auth": "xsuaa",
-        "db": "hana"
+        "db": {
+          "kind": "sqlite",
+          "credentials": {
+            "url": "db.sqlite"
+          }
+        }
       },
       "html5-repo": true,
       "destinations": true,
