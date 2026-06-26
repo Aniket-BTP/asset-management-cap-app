@@ -15,7 +15,10 @@
   "scripts": {
     "start": "cds-serve",
     "lint": "cds lint",
-    "test": "cds test"
+    "test": "cds test",
+    "compile:check": "cds compile srv --to csn > /dev/null",
+    "security:audit": "npm audit --omit=dev --audit-level=high",
+    "quality": "npm run lint && npm test && npm run compile:check && npm run security:audit"
   },
   "private": true,
   "cds": {
