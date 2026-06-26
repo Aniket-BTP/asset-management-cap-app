@@ -2,15 +2,18 @@
   "name": "Asset_Management_Application-1781454148510",
   "version": "1.0.0",
   "dependencies": {
+    "@cap-js/sqlite": "^2.4",
     "@sap/cds": "^9",
-    "@sap/xssec": "^4",
-    "@cap-js/sqlite": "^2.4"
+    "@sap/xssec": "^4"
   },
   "devDependencies": {
-    "@sap/cds-dk": "^9.9.2"
+    "@sap/cds-dk": "^9.9.2",
+    "@sap/eslint-plugin-cds": "^4",
+    "eslint": "^10"
   },
   "scripts": {
-    "start": "cds-serve"
+    "start": "cds-serve",
+    "lint": "cds lint"
   },
   "private": true,
   "cds": {

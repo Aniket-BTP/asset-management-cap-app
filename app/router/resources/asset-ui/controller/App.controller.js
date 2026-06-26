@@ -52,7 +52,6 @@ sap.ui.define([
           ).replace(/\/$/, "")
         : "/odata/v4/asset";
 
-      console.log("Resolved CAP service URL:", SERVICE_URL);
 
       const model = new JSONModel({
         busy: false,
@@ -440,7 +439,7 @@ onSwitchUser: function () {
       if (rawText) {
         try {
           result = JSON.parse(rawText);
-        } catch (error) {
+        } catch {
           result = rawText;
         }
       }
@@ -726,7 +725,7 @@ onSwitchUser: function () {
       const assets = model.getProperty("/assets");
       const requestType = this._requestTypeSelect.getSelectedKey();
 
-      let eligibleAssets = [];
+      let eligibleAssets;
 
       switch (requestType) {
         case "ASSIGN":
