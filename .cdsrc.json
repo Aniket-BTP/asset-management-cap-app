@@ -48,6 +48,55 @@
           }
         }
       }
+    },
+    "[test]": {
+      "db": {
+        "kind": "sqlite",
+        "credentials": {
+          "url": ":memory:"
+        }
+      },
+      "auth": {
+        "kind": "basic",
+        "users": {
+          "employee2@company.com": {
+            "password": "welcome",
+            "roles": [
+              "Employee"
+            ]
+          },
+          "employee3@company.com": {
+            "password": "welcome",
+            "roles": [
+              "Employee"
+            ]
+          },
+          "hrapprover@company.com": {
+            "password": "welcome",
+            "roles": [
+              "HRApprover"
+            ]
+          },
+          "approver1@company.com": {
+            "password": "welcome",
+            "roles": [
+              "Approver"
+            ]
+          },
+          "admin1@company.com": {
+            "password": "welcome",
+            "roles": [
+              "Admin"
+            ]
+          },
+          "nktshelke3346@gmail.com": {
+            "password": "welcome",
+            "roles": [
+              "Employee"
+            ]
+          }
+        }
+      }
     }
   }
 }

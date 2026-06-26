@@ -7,13 +7,15 @@
     "@sap/xssec": "^4"
   },
   "devDependencies": {
+    "@cap-js/cds-test": "^1.0.1",
     "@sap/cds-dk": "^9.9.2",
     "@sap/eslint-plugin-cds": "^4",
     "eslint": "^10"
   },
   "scripts": {
     "start": "cds-serve",
-    "lint": "cds lint"
+    "lint": "cds lint",
+    "test": "cds test"
   },
   "private": true,
   "cds": {
