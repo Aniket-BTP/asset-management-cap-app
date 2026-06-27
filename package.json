@@ -18,7 +18,8 @@
     "test": "cds test",
     "compile:check": "cds compile srv --to csn > /dev/null",
     "security:audit": "npm audit --omit=dev --audit-level=high",
-    "quality": "npm run lint && npm test && npm run compile:check && npm run security:audit"
+    "quality": "npm run lint && npm test && npm run compile:check && npm run security:audit && npm run security:audit:router",
+    "security:audit:router": "npm --prefix app/router audit --omit=dev --audit-level=high"
   },
   "private": true,
   "cds": {
